@@ -1,0 +1,26 @@
+{
+  "name": "landrs-sparql-service",
+  "version": "1.0.0",
+  "description": "LANDRs service creates SPARQL queries",
+  "repository": "github:landrs-toolkit/landrs-sparql-service",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [
+    "sparql",
+    "landrs",
+    "rdf"
+  ],
+  "author": "Center for Research Computing, University of Notre Dame",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "config": "^3.3.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "rdf-ext": "^1.3.0",
+    "sparql-http-client": "^2.2.0"
+  }
+}
