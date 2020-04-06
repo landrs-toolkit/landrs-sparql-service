@@ -1,32 +1,27 @@
 const config = require('config');
 const SimpleClient = require('sparql-http-client/SimpleClient');
-const SparqlClient = require('sparql-http-client');
-const rdf = require('rdf-ext');
 
 const queryUrl = `${config.get('sparql.server_url')}${config.get('sparql.query_path')}`;
+const ACCEPTED_TYPES = [ 'application/n-triples', 'text/turtle', 'application/n-quads' ];
 
-module.exports.describe_type = async function (req, res, next) {
-  try {
-    const client = new SimpleClient({ endpointUrl: queryUrl });
+module.exports.describe_query = async function (req, res, next) {
+  if (req.accepts(ACCEPTED_TYPES) || !req.get('Accept')) {
+    try {
+      if (!req.get('Accept')) {
+        // Default to application/n-triples
+        req.headers.accept = ACCEPTED_TYPES[0];
+      }
+      const client = new SimpleClient({ endpointUrl: queryUrl });
 
-    const resp = await client.query.construct(`DESCRIBE ${req.query.type}`, { headers: { Accept: 'text/turtle' } });
-    const ttl = await resp.text();
-    res.type('text/turtle');
-    res.send(ttl);
-  } catch (err) {
-    next(err);
-  }
-};
+      const resp = await client.query.construct(`DESCRIBE ${req.query.list}`, { headers: { Accept: req.get('Accept') } });
+      const text = await resp.text();
 
-module.exports.describe_list = async function (req, res, next) {
-  try {
-    const client = new SparqlClient({ endpointUrl: queryUrl });
-
-    const stream = await client.query.construct(`DESCRIBE ${req.query.list}`);
-    const dataset = rdf.dataset();
-    await dataset.import(stream);
-    res.json(dataset.toArray());
-  } catch (err) {
-    next(err);
+      res.type(req.get('Accept'));
+      res.send(text);
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    res.status(406).send('Not Acceptable');
   }
 };

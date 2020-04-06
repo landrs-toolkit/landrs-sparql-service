@@ -11,8 +11,7 @@ const port = config.get('port');
 const app = express();
 app.use(morgan('combined'));
 
-app.get('/describe', describe.describe_type);
-app.get('/describe-list', describe.describe_list);
+app.get('/describe', describe.describe_query);
 app.get('/construct', construct.construct_query);
 app.post('/update', bodyParser.text({ type: 'text/turtle' }), update.insert);
 
